@@ -1,9 +1,6 @@
 package com.haulmont.viev;
 
-import com.haulmont.controller.CustService;
-import com.haulmont.model.CustomerStatus;
 import com.haulmont.MyUIC;
-import com.haulmont.model.Cust;
 import com.vaadin.data.Binder;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Button;
