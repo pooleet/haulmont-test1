@@ -4,7 +4,7 @@ import com.haulmont.controller.MechanicService;
 import com.haulmont.controller.OrderService;
 import com.haulmont.model.Mechanic;
 import com.haulmont.model.Order;
-import com.haulmont.viev.MySubMechanic;
+import com.haulmont.model.WorkStatus;
 import com.haulmont.viev.MySubOrder;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -12,12 +12,14 @@ import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.*;
-import db.SqlMechanic;
 import db.SqlOrder;
 
 import javax.servlet.annotation.WebServlet;
+import java.sql.SQLException;
+import java.util.List;
+
 @Theme("mytheme")
-public class MyUIO extends  UI {
+public class MyUIO extends UI {
     // общее окно тут все объединяется
     final HorizontalLayout layoutWindow = new HorizontalLayout();
     // определяем окна
@@ -47,25 +49,104 @@ public class MyUIO extends  UI {
     private Order order;
     private OrderService service;
     // таблицы механик
-    private Grid<Order> mechanicGrid = new Grid<>(Order.class);
+    private Grid<Order> orderGrid = new Grid<>(Order.class);
     private MySubOrder sub;
 
     private SqlOrder sql;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        Vizual();
+        workData();
+        updateList();
+        navDButton();
 
 
+        sql = new SqlOrder();
+// скрываем активность ели строка не выделена
+        editUpdate.setEnabled(false);
+        editDelete.setEnabled(false);
+
+        //Выбираем строку из таблицы
+        orderGrid.asSingleSelect().addValueChangeListener(event -> {
+            editDelete.setEnabled(false);
+            if (event.getValue() == null) {
+
+                editUpdate.setEnabled(false);
+            }
+            if (event.getValue() != null) {
+                editUpdate.setEnabled(true);
+
+                editDelete.setEnabled(true);
+
+                //  layoutButtonUpdate.setEnabled(true);
+                setOrder(event.getValue());
+            }
+        });
+
+        setContent(layoutWindow);
     }
 
+    public void setOrder(Order order) {
+        this.order = order;
+    }
+
+    // работа с данными
+    private void workData() {
+
+        //Изменить
+        editUpdate.addClickListener(event -> {
+            sub = new MySubOrder(this, editUpdate.getCaption());
+            sub.setOrder(order);
+            UI.getCurrent().addWindow(sub);
+        });
+
+        //Добавить
+        editAdd.addClickListener(event -> {
+            sub = new MySubOrder(this, editAdd.getCaption());
+
+            sub.setOrder(new Order(null, null, "", null, "", "", null, null, 0.0, WorkStatus.Запланирован));
+            UI.getCurrent().addWindow(sub);
+        });
 
 
+// удалить
+        editDelete.addClickListener(event -> {
+            if (sql.deleteOrder(order)) {
+                service.delete(order);
+                updateList();
+            }
+        });
+    }
+
+    private void updateList() {
+
+        try {
+            service = OrderService.getInstance();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        List<Order> order = service.findAll();
+
+        orderGrid.setItems(order);
+    }
 
 
     private void Vizual() {
 // таблицы для окон
 
-      //  mechanicGrid.setColumns("name.id", "name.firstName", "name.lastName", "name.role", "countOrder", "price");
+        orderGrid.setColumns("id",
+                "idc",
+                "nameC",
+                "idcM",
+                "nameM",
+                "description",
+                "dateStart",
+                "dateStop",
+                "price",
+                "workStatus");
+
+
         editUpdate.setEnabled(false);
         // layoutButtonUpdate.setEnabled(false);
         layoutButtonNavigation.addComponent(navCustomer);
@@ -79,9 +160,11 @@ public class MyUIO extends  UI {
         //
 
         layoutWindowVertical.addComponent(layoutButtonUpdate);
-        layoutWindowVertical.addComponent(mechanicGrid);
+        layoutWindowVertical.addComponent(orderGrid);
 
-        if (getUI().getUI().toString().contains("MyUIO")){navOrder.setStyleName("Red");}
+        if (getUI().getUI().toString().contains("MyUIO")) {
+            navOrder.setStyleName("Red");
+        }
 
 
         layoutWindow.addComponent(layoutButtonNavigation);
@@ -90,10 +173,9 @@ public class MyUIO extends  UI {
 
     private void navDButton() {
         // Переход на новую вкладку
-      BrowserWindowOpener openerM = new BrowserWindowOpener(MyUIM.class);
+        BrowserWindowOpener openerM = new BrowserWindowOpener(MyUIM.class);
         openerM.setUrl("/mechanic/");
         openerM.extend(navMechanic);
-
 
 
         BrowserWindowOpener openerC = new BrowserWindowOpener(MyUIC.class);

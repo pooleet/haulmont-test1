@@ -8,7 +8,7 @@ public class User implements Serializable, Cloneable {
 
 
     @Override
-    protected User clone() throws CloneNotSupportedException {
+    public User clone() throws CloneNotSupportedException {
                 return (User) super.clone();
     }
 
@@ -56,7 +56,6 @@ public class User implements Serializable, Cloneable {
     public void setRole(Role role) {
         this.role = role;
     }
-
 
 
 

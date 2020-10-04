@@ -1,9 +1,7 @@
 package com.haulmont;
 
 
-import com.haulmont.controller.CustomerService;
 import com.haulmont.controller.MechanicService;
-import com.haulmont.model.Customer;
 import com.haulmont.model.Mechanic;
 import com.haulmont.model.Role;
 import com.haulmont.model.User;

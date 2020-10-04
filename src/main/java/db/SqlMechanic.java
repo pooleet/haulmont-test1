@@ -1,7 +1,6 @@
 package db;
 
 
-import com.haulmont.model.Customer;
 import com.haulmont.model.Mechanic;
 import com.haulmont.model.Role;
 import com.haulmont.model.User;

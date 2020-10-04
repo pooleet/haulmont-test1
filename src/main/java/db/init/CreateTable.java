@@ -8,8 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import static java.lang.Thread.sleep;
-
 public class CreateTable {
     public ArrayList<String> table = new ArrayList();
  public static boolean st=false;
@@ -20,7 +18,7 @@ public class CreateTable {
         table.add("CUSTOMER");
         table.add("MECHANIC");
         table.add("ORDER1");
-        table.add("STATUS");
+      //  table.add("STATUS");
 
 // создаемм таблицу
         for (String s : table) {
@@ -99,11 +97,11 @@ public class CreateTable {
                         "        IDM BIGINT REFERENCES USER (ID) ON DELETE CASCADE, \n" +
                         "        IDC BIGINT REFERENCES USER (ID) ON DELETE SET NULL,    \n" +
                         "        DESCRIPTION VARCHAR(250) NOT NULL, \n" +
-                        "        DATECR timestamp  NOT NULL, /*дата создания*/  \n" +
-                        "        DATEPLAN timestamp  NOT NULL, /*Запланировано*/    \n" +
-                        "        DATEFIN timestamp  , /*выполнено*/ \n" +
-                        "        DATEGIVE timestamp  , /*выдано*/   \n" +
-                        "        COST double precision";
+                        "        DATECR timestamp  NOT NULL, /*дата создания  запланировано*/  \n" +
+                       // "        DATEPLAN timestamp  NOT NULL, /*Запланировано*/    \n" +
+                        "        DATEFIN timestamp  ,   /*  выполнено*/ \n" +
+                        "        STATUSO VARCHAR(50)  , /*  Статус*/   \n" +
+                        "        COST double precision)";
 
 
             /*"CREATE TABLE ORDER1 (  \n" +
@@ -117,13 +115,13 @@ public class CreateTable {
                // System.out.println(sql);
             }
 
-            if (tablName.equals("STATUS")) {
+           // if (tablName.equals("STATUS")) {
                /* sql = "CREATE TABLE STATUS (\n" +
                         "                      IDO  BIGINT REFERENCES ORDER1 (IDO) ON DELETE CASCADE,\n" +
                         "                      STATUS VARCHAR(50) NOT NULL,\n" +
                         "                      DATETIME DATETIME NOT NULL);";
 */
-            }
+         //   }
 
 
             stmnt.executeUpdate(sql);
@@ -177,10 +175,11 @@ public class CreateTable {
                     stmnt.executeUpdate("INSERT into MECHANIC (IDM,HPRICE) values (3,70)");
                 }
                 if (s.equals("ORDER1")) {
-                    stmnt.executeUpdate("INSERT into ORDER1 (IDM,IDC,DESCRIPTION,DATECR,DATEPLAN,DATEFIN,DATEGIVE,COST)\n" +
-                            "values (4,1,'поменять колесо',sysdate,DATE_ADD(sysdate, +1), DATE_ADD(sysdate, +1), DATE_ADD(sysdate, +1) ,1140)");
+                    stmnt.executeUpdate("INSERT into ORDER1 (IDM,IDC,DESCRIPTION,DATECR,DATEFIN,STATUSO,COST)   \n" +
+                            "values (4,1,'поменять колесо',sysdate,DATE_ADD(sysdate, +1), 'Выполнен' ,1140);");
 
-                    stmnt.executeUpdate("");
+                    stmnt.executeUpdate("INSERT into ORDER1 (IDM,IDC,DESCRIPTION,DATECR,DATEFIN,STATUSO,COST)   \n" +
+                            "values (3,2,'Выпрямить дверь',sysdate,null, 'Запланирован' ,114)");
                    // stmnt.executeUpdate("INSERT into ORDER1 (IDM,IDC,DESCRIPTION,DATECR,COST) values (4,2,'покрасить бампер',sysdate,70)");
                    // stmnt.executeUpdate("INSERT into ORDER1 (IDM,IDC,DESCRIPTION,DATECR,COST) values (3,1,'что то стучит',sysdate,140)");
                 }

@@ -1,7 +1,6 @@
 package com.haulmont.controller;
 
 
-import com.haulmont.model.Customer;
 import com.haulmont.model.Mechanic;
 import db.SqlMechanic;
 

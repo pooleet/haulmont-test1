@@ -1,21 +1,38 @@
 package com.haulmont.model;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 public class Order implements Serializable, Cloneable {
     private Long id;
-    private String idc;
+    private Long idc;
     private String nameC;
-    private String idcM;
+    private Long idcM;
     private String nameM;
     private String description;
-    private Date dateStart;
-    private Date datePlan;
-    private Date dateStop;
+    private LocalDate dateStart;
+    private LocalDate dateStop;
     private Double price;
     private WorkStatus workStatus;
 
+    public Order() {
+    }
+
+    public Order(Long id, Long idc, String nameC, Long idcM, String nameM, String description, LocalDate dateStart, LocalDate dateStop, Double price, WorkStatus workStatus) {
+        this.id = id;
+        this.idc = idc;
+        this.nameC = nameC;
+        this.idcM = idcM;
+        this.nameM = nameM;
+        this.description = description;
+        this.dateStart = dateStart;
+        this.dateStop = dateStop;
+        this.price = price;
+        this.workStatus = workStatus;
+    }
 
     public Long getId() {
         return id;
@@ -25,11 +42,11 @@ public class Order implements Serializable, Cloneable {
         this.id = id;
     }
 
-    public String getIdc() {
+    public Long getIdc() {
         return idc;
     }
 
-    public void setIdc(String idc) {
+    public void setIdc(Long idc) {
         this.idc = idc;
     }
 
@@ -41,11 +58,11 @@ public class Order implements Serializable, Cloneable {
         this.nameC = nameC;
     }
 
-    public String getIdcM() {
+    public Long getIdcM() {
         return idcM;
     }
 
-    public void setIdcM(String idcM) {
+    public void setIdcM(Long idcM) {
         this.idcM = idcM;
     }
 
@@ -65,28 +82,21 @@ public class Order implements Serializable, Cloneable {
         this.description = description;
     }
 
-    public Date getDatePlan() {
-        return datePlan;
-    }
 
-    public void setDatePlan(Date datePlan) {
-        this.datePlan = datePlan;
-    }
-
-    public Date getDateStart() {
+    public LocalDate getDateStart() {
         return dateStart;
     }
 
     public void setDateStart(Date dateStart) {
-        this.dateStart = dateStart;
+        this.dateStart = convertToLocalDateViaMilisecond(dateStart);
     }
 
-    public Date getDateStop() {
+    public LocalDate getDateStop() {
         return dateStop;
     }
 
     public void setDateStop(Date dateStop) {
-        this.dateStop = dateStop;
+        this.dateStop = convertToLocalDateViaMilisecond(dateStop);
     }
 
     public Double getPrice() {
@@ -144,10 +154,21 @@ public class Order implements Serializable, Cloneable {
                         nameM +
                         description +
                         dateStart +
-                        datePlan +
+
                         dateStop +
                         price +
                         workStatus
                 ;
+    }
+
+
+    public LocalDate convertToLocalDateViaMilisecond(Date dateToConvert) {
+
+        if (dateToConvert!=null){
+
+        return Instant.ofEpochMilli(dateToConvert.getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();}
+        else return null;
     }
 }

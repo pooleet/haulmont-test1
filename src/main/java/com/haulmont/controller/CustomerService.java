@@ -2,7 +2,6 @@ package com.haulmont.controller;
 
 import com.haulmont.model.Customer;
 import db.SqlCustomer;
-import db.init.CreateTable;
 
 import java.sql.SQLException;
 import java.util.*;
