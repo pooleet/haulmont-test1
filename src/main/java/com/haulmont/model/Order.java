@@ -91,12 +91,21 @@ public class Order implements Serializable, Cloneable {
         this.dateStart = convertToLocalDateViaMilisecond(dateStart);
     }
 
+    public void setDateStart(LocalDate dateStart) {
+        this.dateStart = dateStart;
+    }
+
+
     public LocalDate getDateStop() {
         return dateStop;
     }
 
     public void setDateStop(Date dateStop) {
         this.dateStop = convertToLocalDateViaMilisecond(dateStop);
+    }
+
+    public void setDateStop(LocalDate dateStop) {
+        this.dateStop = dateStop;
     }
 
     public Double getPrice() {
@@ -164,11 +173,20 @@ public class Order implements Serializable, Cloneable {
 
     public LocalDate convertToLocalDateViaMilisecond(Date dateToConvert) {
 
-        if (dateToConvert!=null){
+        if (dateToConvert != null) {
 
-        return Instant.ofEpochMilli(dateToConvert.getTime())
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate();}
-        else return null;
+            return Instant.ofEpochMilli(dateToConvert.getTime())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
+        } else return null;
     }
+
+
+    public String getPriceL() {
+        return price.toString();
+    }
+    public void setPriceL(String price) {
+        this.price = Double.parseDouble(price);
+    }
+
 }

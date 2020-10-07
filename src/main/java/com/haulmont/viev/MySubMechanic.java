@@ -102,6 +102,8 @@ public class MySubMechanic extends Window {
     }
 
     private void valueChange(HasValue.ValueChangeEvent<String> e) {
+
+        // кнопка сохранить активна ?
         binderMechanic.validate();
         boolean rez = binderMechanic.validate().isOk();
         //System.out.println(rez);

@@ -50,7 +50,7 @@ public class MyUIM extends UI {
     private MechanicService service;
     // таблицы механик
     private Grid<Mechanic> mechanicGrid = new Grid<>(Mechanic.class);
-      private MySubMechanic sub;
+    private MySubMechanic sub;
 
     private SqlMechanic sql;
 
@@ -93,6 +93,7 @@ public class MyUIM extends UI {
 
 
     }
+
     public void setMechanic(Mechanic mechanic) {
         this.mechanic = mechanic;
     }
@@ -108,8 +109,6 @@ public class MyUIM extends UI {
 
         mechanicGrid.setItems(mechanic);
     }
-
-
 
 
     private void Vizual() {
@@ -131,7 +130,9 @@ public class MyUIM extends UI {
         layoutWindowVertical.addComponent(layoutButtonUpdate);
         layoutWindowVertical.addComponent(mechanicGrid);
 
-        if (getUI().getUI().toString().contains("MyUIM")){navMechanic.setStyleName("Red");}
+        if (getUI().getUI().toString().contains("MyUIM")) {
+            navMechanic.setStyleName("Red");
+        }
 
 
         layoutWindow.addComponent(layoutButtonNavigation);
@@ -139,10 +140,10 @@ public class MyUIM extends UI {
     }
 
     // удалить
- //   private void delete() {
+    //   private void delete() {
 
 
- //   }
+    //   }
 
 
     private void navDButton() {
@@ -187,7 +188,7 @@ public class MyUIM extends UI {
 // удалить
         editDelete.addClickListener(event -> {
             if (sql.deleteMechanic(mechanic)) {
-               service.delete(mechanic);
+                service.delete(mechanic);
                 updateList();
             }
         });
