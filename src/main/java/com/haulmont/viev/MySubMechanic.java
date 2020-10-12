@@ -28,17 +28,19 @@ public class MySubMechanic extends Window {
     private Label role = new Label("Роль");
     private TextField price = new TextField("Цена за час");
     private Button save;
-    private Button close = new Button("Закрыть");
+    private Button close = new Button("Отменить");
 
     private MechanicService service;
     private SqlMechanic sql;
 
+    private String Caption = "";
     public MySubMechanic(MyUIM myUIM, String nameButt) {
 
         super(nameButt);
         setSizeUndefined();
         this.myUIM = myUIM;
-        save = new Button(nameButt);
+        save = new Button("ОК");
+        Caption= nameButt;
         center();
         setClosable(false);
         setModal(true);
@@ -146,13 +148,13 @@ public class MySubMechanic extends Window {
     }
 
     private void save() {
-        if (save.getCaption().equals("Изменить") && sql.UpdateMechanic(mechanic)) {
+        if (Caption.equals("Изменить") && sql.UpdateMechanic(mechanic)) {
             service.save(mechanic);
             myUIM.updateList();
             close();
         }
 
-        if (save.getCaption().equals("Добавить") && sql.CreateMechanic(mechanic)) {
+        if (Caption.equals("Добавить") && sql.CreateMechanic(mechanic)) {
             try {
                 service.loadData();
                 myUIM.updateList();

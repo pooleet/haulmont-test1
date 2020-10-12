@@ -30,17 +30,19 @@ public class MySubCustomer extends Window {
     private Label role = new Label("Роль");
     private TextField phone = new TextField("Номер телефона");
     private Button save;
-    private Button close = new Button("Закрыть");
+    private Button close = new Button("Отменить");
 
     private CustomerService serviceC;
     private SqlCustomer sql;
 
+    private String Caption = "";
     public MySubCustomer(MyUIC myUIC, String nameButt) {
         // тут название окна
         super(nameButt);
         setSizeUndefined();
         this.myUIC = myUIC;
-        save = new Button(nameButt);
+        save = new Button("OK");
+        Caption = nameButt;
         center();
         setClosable(false);
         setModal(true);
@@ -147,13 +149,13 @@ public class MySubCustomer extends Window {
     }
 
     private void save() {
-        if (save.getCaption().equals("Изменить") && sql.UpdateCustomer(customer)) {
+        if (Caption.equals("Изменить") && sql.UpdateCustomer(customer)) {
             serviceC.save(customer);
             myUIC.updateList();
             close();
         }
 
-        if (save.getCaption().equals("Добавить") && sql.CreateCustomer(customer)) {
+        if (Caption.equals("Добавить") && sql.CreateCustomer(customer)) {
             try {
                 serviceC.loadData();
                 myUIC.updateList();

@@ -123,7 +123,7 @@ public class MyUIC extends UI {
 
     private void Vizual() {
 // таблицы для окон
-
+        customerGrid.setWidth(1000,Unit.PIXELS);
         customerGrid.setColumns("name.id", "name.firstName", "name.lastName", "name.role", "countOrder", "phone");
         editUpdate.setEnabled(false);
         // layoutButtonUpdate.setEnabled(false);

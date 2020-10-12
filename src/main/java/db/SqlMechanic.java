@@ -1,6 +1,7 @@
 package db;
 
 
+import com.haulmont.model.MechStatistic;
 import com.haulmont.model.Mechanic;
 import com.haulmont.model.Role;
 import com.haulmont.model.User;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 public class SqlMechanic {
     private String sql = "";
     private Connection conn = null;
+
     public SqlMechanic() {
     }
 
@@ -32,7 +34,7 @@ public class SqlMechanic {
             while (res.next()) {
 
                 User user = new User();
-              //  System.out.println(res.getString("SURNAME"));
+                //  System.out.println(res.getString("SURNAME"));
                 user.setId(res.getLong("ID"));
                 user.setFirstName(res.getString("NAME"));
                 user.setLastName(res.getString("SURNAME"));
@@ -41,18 +43,19 @@ public class SqlMechanic {
 
 
                 mList.add(new Mechanic(user, res.getDouble("HPRICE"), res.getInt("IDO")));
-                conn.close();
-            }
 
-        } catch (SQLException |  ClassNotFoundException e) {
+            }
+            conn.close();
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            System.out.println("ошибки при заполнении "+sql +"      ");
+            System.out.println("ошибки при заполнении " + sql + "      ");
         }
 
 
         return mList;
     }
-// удалить строку
+
+    // удалить строку
     public boolean deleteMechanic(Mechanic mechanic) {
 
         sql = "delete from user where id= " + mechanic.getName().getId() + "";
@@ -65,14 +68,15 @@ public class SqlMechanic {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
-          //  System.out.println("ошибки при заполнении " + sql);
+            //  System.out.println("ошибки при заполнении " + sql);
             return false;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             return false;
         }
     }
-// обновить строку
+
+    // обновить строку
     public boolean UpdateMechanic(Mechanic mechanic) {
         sql = "UPDATE  USER set NAME='" + mechanic.getName().getFirstName() + "', " +
                 "SURNAME='" + mechanic.getName().getLastName() + "',FNAME='" + mechanic.getName().getFatherName() + "' " +
@@ -99,7 +103,8 @@ public class SqlMechanic {
             return false;
         }
     }
-// Создать строку
+
+    // Создать строку
     public boolean CreateMechanic(Mechanic mechanic) {
         Connection conn = null;
         sql = " INSERT into USER (NAME,SURNAME,FNAME,ROLE) " +
@@ -131,5 +136,48 @@ public class SqlMechanic {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public ArrayList<MechStatistic> getStatistic() {
+        ArrayList<MechStatistic> sList = new ArrayList<MechStatistic>();
+        sql = "select a1.IDM,       a1.HPRICE,       case when a2.money is null then 0 else a2.money end money,    \n" +
+                "       case when a2.finW is null then 0 else a2.finW end   finW,   \n" +
+                "       case when a3.nFinW is null then 0 else a3.nFinW end nFinW,  \n" +
+                "       case when a2.money is null then 0 else a2.money / a1.HPRICE end  timeW,  \n" +
+                "       a4.SURNAME+' '+ Substring(a4.NAME,0,2)+'.'+ Substring(a4.FNAME,0,2)+'.' mm  \n" +
+                "from MECHANIC a1   \n" +
+                "    left join (select idm, sum(COST) money, count(STATUSO) finW    \n" +
+                "    from ORDER1 a1 where DATEFIN is not null group by idm  \n" +
+                "    ) a2 on a1.IDM = a2.IDM    \n" +
+                "    left join (select idm, count(STATUSO) nFinW from ORDER1 where DATEFIN is null group by idm) as a3  \n" +
+                "    on a1.IDM = a3.IDM inner join USER a4 on a1.IDM = a4 .ID   \n" +
+                "order by  finW desc, mm    ";
+
+
+        try {
+            conn = ConnectSql.getMySQLConnection();
+            Statement stmnt = conn.createStatement();
+            ResultSet res = stmnt.executeQuery(sql);
+            while (res.next()) {
+
+                MechStatistic statistic = new MechStatistic();
+
+                statistic.setCountWork(res.getLong("finW"));
+                statistic.setId(res.getLong("IDM"));
+                statistic.setCountMoney(res.getDouble("money"));
+                statistic.setCountNotWork(res.getLong("nFinW"));
+                statistic.setCountTime(res.getDouble("timeW"));
+                statistic.setName(res.getString("mm"));
+
+                sList.add(statistic);
+
+            }
+            conn.close();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("ошибки при заполнении " + sql + "      ");
+        }
+        return sList;
+
     }
 }

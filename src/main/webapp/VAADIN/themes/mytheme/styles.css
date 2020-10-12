@@ -15221,4 +15221,5 @@ div.v-layout.v-horizontal.v-widget {
 
 .mytheme .v-button.v-button-Red .v-button-wrap {
 	background: red;
+	width: 100px;
 }

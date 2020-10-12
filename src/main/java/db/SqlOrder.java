@@ -21,7 +21,22 @@ public class SqlOrder {
     }
 
     public boolean deleteOrder(Order order) {
-        return true;
+
+        sql = "delete from ORDER1 where idO= " + order.getId() + "";
+// поиск ид
+        try {
+            conn = ConnectSql.getMySQLConnection();
+            Statement stmnt = conn.createStatement();
+            stmnt.executeUpdate(sql);
+            conn.close();
+            return true;
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.out.println(error + "\n" + sql + "      ");
+            return false;
+        }
+
+
     }
 
     public ArrayList<Order> loadOrderList() {
@@ -51,7 +66,7 @@ public class SqlOrder {
                 ord.setPrice(res.getDouble("COST"));
                 ord.setWorkStatus(WorkStatus.valueOf(res.getString("STATUSO")));
 
-                System.out.println(res.getDate("DATEFIN"));
+               // System.out.println(res.getDate("DATEFIN"));
                 oList.add(ord);
 
 
@@ -62,6 +77,75 @@ public class SqlOrder {
             System.out.println(error + "\n" + sql + "      ");
             return null;
         }
+
+    }
+
+    public boolean CreateOrder(Order order) {
+        // System.out.println(order.toString());
+        Connection conn = null;
+
+        sql =
+                "INSERT into ORDER1 (IDM,IDC,DESCRIPTION,DATECR,DATEFIN,STATUSO,COST)   \n" +
+                        "   values (" + nullOrN(order.getIdcM()) + "," +
+                        "" + nullOrN(order.getIdc()) + "," +
+                        "'" + order.getDescription() + "'," +
+                        "'" + order.getDateStart() + "'," +
+                        "" + nullOrN(order.getDateStop()) + ", " +
+                        "'" + order.getWorkStatus() + "' ,'" + order.getPrice() + "');";
+
+        try {
+            conn = ConnectSql.getMySQLConnection();
+            Statement stmnt = conn.createStatement();
+            stmnt.executeUpdate(sql);
+
+            conn.close();
+
+            return true;
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.out.println(error + "\n" + sql + "      ");
+            return false;
+        }
+
+    }
+
+    // проверка на нулевое значение
+    private String nullOrN(Object ord) {
+        // System.out.println(ord);
+        if (ord == null || ord.equals("0") || ord.equals(0)) {
+            System.out.println("ord  " + ord);
+            return null;
+        } else return "'" + ord + "'";
+    }
+
+
+    public boolean UpdateOrder(Order order) {
+        sql = "UPDATE  ORDER1 set IDM=" + nullOrN(order.getIdcM()) + ", " +
+                "IDC=" + nullOrN(order.getIdc()) + "," +
+                "DESCRIPTION='" + order.getDescription() + "', " +
+                "DATECR=" + nullOrN(order.getDateStart()) + "," +
+                "DATEFIN=" + nullOrN(order.getDateStop()) + ", " +
+                "STATUSO='" + order.getWorkStatus() + "', " +
+                "COST='" + order.getPrice() + "' " +
+
+
+                "where IDO='" + order.getId() + "' ";
+
+
+        try {
+            conn = ConnectSql.getMySQLConnection();
+            Statement stmnt = conn.createStatement();
+            stmnt.executeUpdate(sql);
+
+           // System.out.println("Обновленте " +sql + "      ");
+            conn.close();
+            return true;
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            System.out.println(error + "\n" + sql + "      ");
+            return false;
+        }
+
 
     }
 }

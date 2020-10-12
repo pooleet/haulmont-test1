@@ -5,6 +5,7 @@ import com.haulmont.controller.MechanicService;
 import com.haulmont.model.Mechanic;
 import com.haulmont.model.Role;
 import com.haulmont.model.User;
+import com.haulmont.viev.MySubMechStat;
 import com.haulmont.viev.MySubMechanic;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -46,12 +47,14 @@ public class MyUIM extends UI {
     final Button editUpdate = new Button("Изменить");
     final Button editDelete = new Button("Удалить");
 
+    final Button editStatistic = new Button("Показать статистику");
+
     private Mechanic mechanic;
     private MechanicService service;
     // таблицы механик
     private Grid<Mechanic> mechanicGrid = new Grid<>(Mechanic.class);
     private MySubMechanic sub;
-
+    private MySubMechStat subS;
     private SqlMechanic sql;
 
 
@@ -113,7 +116,7 @@ public class MyUIM extends UI {
 
     private void Vizual() {
 // таблицы для окон
-
+        mechanicGrid.setWidth(1000,Unit.PIXELS);
         mechanicGrid.setColumns("name.id", "name.firstName", "name.lastName", "name.role", "countOrder", "price");
         editUpdate.setEnabled(false);
         // layoutButtonUpdate.setEnabled(false);
@@ -125,6 +128,7 @@ public class MyUIM extends UI {
         layoutButtonUpdate.addComponent(editAdd);
         layoutButtonUpdate.addComponent(editUpdate);
         layoutButtonUpdate.addComponent(editDelete);
+        layoutButtonUpdate.addComponent(editStatistic);
         //
 
         layoutWindowVertical.addComponent(layoutButtonUpdate);
@@ -191,6 +195,13 @@ public class MyUIM extends UI {
                 service.delete(mechanic);
                 updateList();
             }
+        });
+
+        // показать статистику
+        editStatistic.addClickListener(event ->{
+            subS = new MySubMechStat(this);
+
+            UI.getCurrent().addWindow(subS);
         });
     }
 

@@ -1,7 +1,6 @@
 package com.haulmont.controller;
 
 
-
 import com.haulmont.model.Order;
 import db.SqlOrder;
 
@@ -31,13 +30,16 @@ public class OrderService {
 
     public void loadData() throws SQLException, ClassNotFoundException {
 
-        //обънкт пустой?
-        orders.clear();
+        //объект пустой?
+        if (!findAll().isEmpty()) {
+            orders.clear();
+        }
+
         if (findAll().isEmpty()) {
 
             ArrayList<Order> order = sql.loadOrderList();
             for (Order s : order) {
-                 System.out.println("id ОРДЕР   "+s.getId());
+                //System.out.println("id ОРДЕР   " + s.getId());
                 save(s);
             }
         }
@@ -47,19 +49,49 @@ public class OrderService {
 
     // дает возмодность выполнять код только 1 потоком
     public synchronized List<Order> findAll() {
-        return findAll(null);
+        return findAll(null, null, null);
     }
 
     // фильтер
-    public synchronized List<Order> findAll(String stringFilter) {
+    public synchronized List<Order> findAll(String name, String stat, String descr) {
 
         ArrayList<Order> arrayList = new ArrayList<>();
+        String[] arr = new String[]{name, stat, descr};
+
         // получить набор из всех значений
+
+
         for (Order order : orders.values()) {
+            boolean passesFilter1 = false;
+            boolean passesFilter2 = false;
+            boolean passesFilter3 = false;
             try {
-                boolean passesFilter = (stringFilter == null || stringFilter.isEmpty())
-                        || order.toString().toLowerCase().contains(stringFilter.toLowerCase());
-                if (passesFilter) {
+                for (int i = 0; i < arr.length; i++) {
+                    if (i == 0) {
+                        // String fname=order.getNameC();
+                        passesFilter1 = (arr[i] == null || arr[i].isEmpty())
+                                || order.getNameC().toLowerCase().contains(arr[i].toLowerCase());
+                        i = +i;
+                    }
+
+                    if (i == 1) {
+
+                        passesFilter2 = (arr[i] == null || arr[i].isEmpty())
+                                || order.getWorkStatus().name().toLowerCase().contains(arr[i].toLowerCase());
+                        i = +i;
+                    }
+
+                    if (i == 2) {
+
+                        passesFilter3 = (arr[i] == null || arr[i].isEmpty())
+                                || order.getDescription().toLowerCase().contains(arr[i].toLowerCase());
+                        i = +i;
+                    }
+                }
+
+
+
+                if (passesFilter1 && passesFilter2 && passesFilter3 && (!arrayList.contains(order))) {
                     arrayList.add(order.clone());
                 }
             } catch (CloneNotSupportedException ex) {
@@ -73,6 +105,7 @@ public class OrderService {
                 return (int) (o2.getId() - o1.getId());
             }
         });
+
         return arrayList;
     }
 
@@ -85,7 +118,7 @@ public class OrderService {
         }
 
         orders.put(entry.getId(), entry);
-        System.out.println("Заказ  " + orders.size());
+       // System.out.println("Заказ  " + orders.size());
 
     }
 
@@ -94,10 +127,6 @@ public class OrderService {
         orders.remove(value.getId());
         // добавить метод удаления из бд
     }
-
-
-
-
 
 
 }

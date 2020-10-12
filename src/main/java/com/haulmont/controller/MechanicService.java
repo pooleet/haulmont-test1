@@ -37,7 +37,7 @@ public class MechanicService {
 
     public void loadData() throws SQLException, ClassNotFoundException {
 
-        //обънкт пустой?
+        //объект пустой?
         mechanics.clear();
         if (findAll().isEmpty()) {
 
@@ -69,7 +69,7 @@ public class MechanicService {
         }
 
         mechanics.put(entry.getName().getId(), entry);
-        System.out.println("Механик  " + mechanics.size());
+        //System.out.println("Механик  " + mechanics.size());
 
     }
 

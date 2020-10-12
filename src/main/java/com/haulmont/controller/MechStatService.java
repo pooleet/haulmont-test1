@@ -1,43 +1,43 @@
 package com.haulmont.controller;
 
-import com.haulmont.model.User;
+import com.haulmont.model.MechStatistic;
+import com.haulmont.model.Order;
 import com.haulmont.model.User;
 import db.SqlMechanic;
-import db.SqlUser;
+import db.SqlOrder;
 
 import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class UserService {
+public class MechStatService {
+    private static MechStatService instance;
+    private final HashMap<Long, MechStatistic> mechStatistic = new HashMap<>();
 
-    private static UserService instance;
-    private final HashMap<Long, User> users = new HashMap<>();
-    private SqlUser sql = new SqlUser();
+    private SqlMechanic sql = new SqlMechanic();
 
-    // проверяем наличие оюбъектов
-    public static UserService getInstance() throws SQLException, ClassNotFoundException {
-        //if (instance == null) {
-            instance = new UserService();
-            instance.loadData();
-      //  }
+
+    public static MechStatService getInstance() throws SQLException, ClassNotFoundException {
+
+        instance = new MechStatService();
+        instance.loadData();
+
         return instance;
     }
 
-    // дает возмодность выполнять код только 1 потоком
-    public synchronized List<User> findAll() {
+    public synchronized List<MechStatistic> findAll() {
         return findAll(null);
     }
 
     public void loadData() throws SQLException, ClassNotFoundException {
 
         //обънкт пустой?
-        users.clear();
+        mechStatistic.clear();
         if (findAll().isEmpty()) {
 
-            ArrayList<User> users = sql.loadUserList();
-            for (User s : users) {
+            ArrayList<MechStatistic> mechList = sql.getStatistic();
+            for (MechStatistic s : mechList) {
                 // System.out.println("id   "+s.getName().getId());
                 save(s);
             }
@@ -47,15 +47,7 @@ public class UserService {
 
     }
 
-
-    public synchronized void delete(User value) {
-
-        users.remove(value.getId());
-        // добавить метод удаления из бд
-    }
-
-
-    public synchronized void save(User entry) {
+    public synchronized void save(MechStatistic entry) {
 
         try {
             entry = entry.clone();
@@ -63,17 +55,16 @@ public class UserService {
             throw new RuntimeException(ex);
         }
 
-        users.put(entry.getId(), entry);
-       // System.out.println("Человек " + users.size());
+        mechStatistic.put(entry.getId(), entry);
+     //   System.out.println("Статистика  " + mechStatistic.size());
 
     }
 
-    // фильтр
-    public synchronized List<User> findAll(String stringFilter) {
+    public synchronized List<MechStatistic> findAll(String stringFilter) {
 
-        ArrayList<User> arrayList = new ArrayList<>();
+        ArrayList<MechStatistic> arrayList = new ArrayList<>();
         // получить набор из всех значений
-        for (User user : users.values()) {
+        for (MechStatistic user : mechStatistic.values()) {
             try {
                 boolean passesFilter = (stringFilter == null || stringFilter.isEmpty())
                         || user.toString().toLowerCase().contains(stringFilter.toLowerCase());
@@ -84,15 +75,13 @@ public class UserService {
                 Logger.getLogger(UserService.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        Collections.sort(arrayList, new Comparator<User>() {
+        Collections.sort(arrayList, new Comparator<MechStatistic>() {
 
             @Override
-            public int compare(User o1, User o2) {
+            public int compare(MechStatistic o1, MechStatistic o2) {
                 return (int) (o2.getId() - o1.getId());
             }
         });
         return arrayList;
     }
-
-
 }

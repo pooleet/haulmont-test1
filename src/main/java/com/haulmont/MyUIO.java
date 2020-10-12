@@ -1,8 +1,6 @@
 package com.haulmont;
 
-import com.haulmont.controller.MechanicService;
 import com.haulmont.controller.OrderService;
-import com.haulmont.model.Mechanic;
 import com.haulmont.model.Order;
 import com.haulmont.model.WorkStatus;
 import com.haulmont.viev.MySubOrder;
@@ -11,8 +9,10 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.BrowserWindowOpener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
+import com.vaadin.shared.ui.orderedlayout.VerticalLayoutState;
 import com.vaadin.ui.*;
 import db.SqlOrder;
+import javafx.geometry.VerticalDirection;
 
 import javax.servlet.annotation.WebServlet;
 import java.sql.SQLException;
@@ -53,6 +53,13 @@ public class MyUIO extends UI {
     private MySubOrder sub;
 
     private SqlOrder sql;
+
+    // фильтр
+
+    private TextField fCustomer = new TextField("Клиент");
+    private TextField fStatus = new TextField("Статус");
+    private TextField fDescription = new TextField("Заказ");
+    final Button editSearch = new Button("Поиск");
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -117,16 +124,18 @@ public class MyUIO extends UI {
                 updateList();
             }
         });
+
+        editSearch.addClickListener(e -> updateList());
     }
 
-    private void updateList() {
+    public void updateList() {
 
         try {
             service = OrderService.getInstance();
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-        List<Order> order = service.findAll();
+        List<Order> order = service.findAll(fCustomer.getValue(), fStatus.getValue(),fDescription.getValue());
 
         orderGrid.setItems(order);
     }
@@ -135,17 +144,9 @@ public class MyUIO extends UI {
     private void Vizual() {
 // таблицы для окон
 
-        orderGrid.setColumns("id",
-                "idc",
-                "nameC",
-                "idcM",
-                "nameM",
-                "description",
-                "dateStart",
-                "dateStop",
-                "price",
-                "workStatus");
-
+        orderGrid.setColumns("id", "description", "dateStart", "dateStop", "price", "workStatus",
+                "nameM", "nameC","idc","idcM");
+        orderGrid.setWidth(1000,Unit.PIXELS);
 
         editUpdate.setEnabled(false);
         // layoutButtonUpdate.setEnabled(false);
@@ -159,15 +160,26 @@ public class MyUIO extends UI {
         layoutButtonUpdate.addComponent(editDelete);
         //
 
+
+        layoutFilter.addComponent(fCustomer);
+        layoutFilter.addComponent(fStatus);
+        layoutFilter.addComponent(fDescription);
+
+        layoutFilter.addComponent(editSearch);
+
+
+        layoutWindowVertical.addComponent(layoutFilter);
         layoutWindowVertical.addComponent(layoutButtonUpdate);
         layoutWindowVertical.addComponent(orderGrid);
 
         if (getUI().getUI().toString().contains("MyUIO")) {
             navOrder.setStyleName("Red");
+
         }
 
 
         layoutWindow.addComponent(layoutButtonNavigation);
+
         layoutWindow.addComponent(layoutWindowVertical);
     }
 

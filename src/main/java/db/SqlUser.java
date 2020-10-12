@@ -40,6 +40,7 @@ public class SqlUser {
 
 
             }
+            conn.close();
             return uList;
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
